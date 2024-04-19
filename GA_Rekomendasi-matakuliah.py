@@ -35,37 +35,37 @@ matakuliah_mkom = {
 }
 
 matakuliah_wajib = {
-    11: {"Kode": "MII225201", "Nama": "Analisis Algoritme","Dosen":"1. Drs. Suprapto, M.I.Kom.\n\n2. Dr. Nur Rokhman, S.Si., M.Kom.", "hari": 2, "jam": 2},
-    12: {"Kode": "MII225202", "Nama": "Matematika untuk Ilmu Komputer","Dosen":"1. Prof. Dr.-Ing. Mhd. Reza M. I. Pulungan, S.Si., M.Sc.\n\n2. Drs. Sri Mulyana, M.Kom.", "hari": 4, "jam": 3},
-    13: {"Kode": "MII226001", "Nama": "Metodologi Riset Ilmu Komputer","Dosen":"1. Dr. Dyah Aruming Tyas, S.Si.\n\n     2. Aina Musdholifah, S.Kom., M.Kom., Ph.D." ,"hari": 5, "jam": 3},
-    14: {"Kode": "MII226002", "Nama": "Proposal Tesis","Dosen":"", "hari": 0, "jam": 0},
-    15: {"Kode": "MII226010", "Nama": "Seminar Tesis","Dosen":"", "hari": 0, "jam": 0},
-    16: {"Kode": "MII226011", "Nama": "Tesis","Dosen":"" ,"hari": 0, "jam": 0},
+    12: {"Kode": "MII225201", "Nama": "Analisis Algoritme","Dosen":"1. Drs. Suprapto, M.I.Kom.\n\n2. Dr. Nur Rokhman, S.Si., M.Kom.", "hari": 2, "jam": 2},
+    13: {"Kode": "MII225202", "Nama": "Matematika untuk Ilmu Komputer","Dosen":"1. Prof. Dr.-Ing. Mhd. Reza M. I. Pulungan, S.Si., M.Sc.\n\n2. Drs. Sri Mulyana, M.Kom.", "hari": 4, "jam": 3},
+    14: {"Kode": "MII226001", "Nama": "Metodologi Riset Ilmu Komputer","Dosen":"1. Dr. Dyah Aruming Tyas, S.Si.\n\n     2. Aina Musdholifah, S.Kom., M.Kom., Ph.D." ,"hari": 5, "jam": 3},
+    15: {"Kode": "MII226002", "Nama": "Proposal Tesis","Dosen":"", "hari": 0, "jam": 0},
+    16: {"Kode": "MII226010", "Nama": "Seminar Tesis","Dosen":"", "hari": 0, "jam": 0},
+    17: {"Kode": "MII226011", "Nama": "Tesis","Dosen":"" ,"hari": 0, "jam": 0},
 }
 
 matakuliah_minat = {
-    17: {
+    18: {
         "Kode": "MII226501",
         "Nama": "Data Science",
         "Dosen": "1. Dr. Sigit Priyanta, S.Si., M.Kom.\n\n2. Arif Nurwidyantoro, S.Kom., M.Cs., Ph.D.",
         "hari": 3,
         "jam": 2
     },
-    18: {
+    19: {
         "Kode": "MII226203",
         "Nama": "Teori Komputasi",
         "Dosen": "1. Moh. Edi Wibowo, S.Kom., M.Kom., Ph.D.\n\n2. Faizal Makhrus, S.Kom., M.Sc., Ph.D.",
         "hari": 4,
         "jam": 2
     },
-    19: {
+    20: {
         "Kode": "MII226602",
         "Nama": "Jaringan Komputer Lanjut",
         "Dosen": "1. Muhammad Alfian Amrizal, B.Eng., M.I.S., Ph.D.\n\n2. Drs. Yohanes Suyanto, M.I.Kom.",
         "hari": 3,
         "jam": 2
     },
-    20: {
+    21: {
         "Kode": "MII226504", 
         "Nama": "Pengembangan Perangkat Lunak",
         "Dosen": "1. Dr. Lukman Heryawan, S.T., M.T.",
@@ -141,37 +141,49 @@ def calculate_fitness(individual):
 # Fungsi untuk menghasilkan populasi awal
 def generate_initial_population(matakuliah_sebelumnya_id, minat=None, wajib=None):
     population = set()  # Menggunakan set untuk memastikan setiap individu unik
-    while len(population) < POPULATION_SIZE:
+    
+    # Jika matakuliah_sebelumnya_id kosong, ambil 3 matakuliah dari matakuliah_mkom dan 3 matakuliah_wajib
+    if not matakuliah_sebelumnya_id:
+        remaining_matakuliah = set()
+        
+        # Ambil 3 matakuliah dari matakuliah_mkom
+        for i, (key, value) in enumerate(matakuliah_mkom.items()):
+            if i < 3:
+                remaining_matakuliah.add(key)
+        
+        # Ambil 3 matakuliah dari matakuliah_wajib
+        for i, (key, value) in enumerate(matakuliah_wajib.items()):
+            if i < 3:
+                remaining_matakuliah.add(key)
+    else:
         remaining_matakuliah = set(matakuliah_mkom.keys()) - set(matakuliah_sebelumnya_id)
-        
-        individual = []
-        # individual = random.sample(list(matakuliah_mkom.keys()), NUM_MATKUL-2)
-        # individual = [matkul for matkul in individual if matkul not in matakuliah_sebelumnya_id]
-        
-        # Jika ada minat, pastikan matakuliah minat tersebut dimasukkan ke dalam individu
-        if minat:
-            minat_id = next((key for key, value in matakuliah_minat.items() if value["Nama"] == minat["Nama"]), None)
-            if minat_id:
-                individual.append(minat_id)
-                remaining_matakuliah.discard(minat_id)
-        
-        # Jika ada matakuliah wajib, pastikan matakuliah wajib tersebut dimasukkan ke dalam individu
-        if wajib:
-            wajib_id = next((key for key, value in matakuliah_wajib.items() if value["Nama"] == wajib["Nama"]), None)
-            if wajib_id:
-                individual.append(wajib_id)
-                remaining_matakuliah.discard(wajib_id)
-        
-        # Tambahkan matakuliah lainnya dari sisa matakuliah yang tersedia
-        while len(individual) < NUM_MATKUL:
-            matkul_id = random.choice(list(remaining_matakuliah))
-            individual.append(matkul_id)
-            remaining_matakuliah.discard(matkul_id)
+    
+    individual = []
+    
+    # Jika ada minat, pastikan matakuliah minat tersebut dimasukkan ke dalam individu
+    if minat:
+        minat_id = next((key for key, value in matakuliah_minat.items() if value["Nama"] == minat["Nama"]), None)
+        if minat_id:
+            individual.append(minat_id)
+            remaining_matakuliah.discard(minat_id)
+    
+    # Jika ada matakuliah wajib, pastikan matakuliah wajib tersebut dimasukkan ke dalam individu
+    if wajib:
+        wajib_id = next((key for key, value in matakuliah_wajib.items() if value["Nama"] == wajib["Nama"]), None)
+        if wajib_id:
+            individual.append(wajib_id)
+            remaining_matakuliah.discard(wajib_id)
+    
+    # Tambahkan matakuliah lainnya dari sisa matakuliah yang tersedia
+    while len(individual) < NUM_MATKUL:
+        matkul_id = random.choice(list(remaining_matakuliah))
+        individual.append(matkul_id)
+        remaining_matakuliah.discard(matkul_id)
 
-        # Pastikan individu memiliki jumlah matakuliah yang sesuai
-        if len(individual) == NUM_MATKUL:
-            # Menggunakan tuple untuk menyimpan individu karena list tidak hashable dan tidak dapat digunakan dalam set
-            population.add(tuple(individual))
+    # Pastikan individu memiliki jumlah matakuliah yang sesuai
+    if len(individual) == NUM_MATKUL:
+        # Menggunakan tuple untuk menyimpan individu karena list tidak hashable dan tidak dapat digunakan dalam set
+        population.add(tuple(individual))
 
     # Mengonversi set kembali ke list sebelum mengembalikannya
     return [list(individual) for individual in population]
@@ -204,9 +216,7 @@ def mutate(individual):
 
 # Update Algoritma Genetika
 def genetic_algorithm(matakuliah_sebelumnya_id, minat=None,wajib=None):
-    print(matakuliah_sebelumnya_id)
     population = generate_initial_population(matakuliah_sebelumnya_id, minat,wajib)
-    print(population)
     best_individual = None
     best_fitness = 0
 
@@ -240,56 +250,63 @@ def main():
 
     minat_chosen = False
     best_solution = []
+
+    semester = st.selectbox("Semester:", ["Semester 1", "Bukan Semester 1"])
+    if semester == "Semester 1":
+        matakuliah_sebelumnya_id = []
+        minat = None
+        wajib = None
+    else:
     
-    # Menampilkan data matakuliah
-    st.subheader("Data Matakuliah")
-    st.write("Matakuliah yang ditawarkan:")
-    all_courses = {**matakuliah_mkom, **matakuliah_wajib, **matakuliah_minat}
-    st.table(all_courses)
+        # Menampilkan data matakuliah
+        st.subheader("Data Matakuliah")
+        st.write("Matakuliah yang ditawarkan:")
+        all_courses = {**matakuliah_mkom, **matakuliah_wajib, **matakuliah_minat}
+        st.table(all_courses)
 
-    nama_ke_id = {course["Nama"]: id for id, course in all_courses.items()}
+        nama_ke_id = {course["Nama"]: id for id, course in all_courses.items()}
 
-    # Pilihan matakuliah yang sudah diambil pada semester sebelumnya
-    matakuliah_sebelumnya.extend(st.multiselect("Pilih matakuliah yang telah diambil pada semester sebelumnya:", list(nama_ke_id.keys())))
+        # Pilihan matakuliah yang sudah diambil pada semester sebelumnya
+        matakuliah_sebelumnya.extend(st.multiselect("Pilih matakuliah yang telah diambil pada semester sebelumnya:", list(nama_ke_id.keys())))
 
-    # Konversi matakuliah yang telah dipilih menjadi ID
-    matakuliah_sebelumnya_id = [nama_ke_id[nama] for nama in matakuliah_sebelumnya]
+        # Konversi matakuliah yang telah dipilih menjadi ID
+        matakuliah_sebelumnya_id = [nama_ke_id[nama] for nama in matakuliah_sebelumnya]
 
-    # Jika belum mengambil matakuliah minat, tampilkan selectbox untuk memilih minat
-    if 17 not in matakuliah_sebelumnya_id and 18 not in matakuliah_sebelumnya_id and 19 not in matakuliah_sebelumnya_id and 20 not in matakuliah_sebelumnya_id:
-        minat = st.selectbox("Pilih Minat:", ["", "Sains Data", "Sains Komputasional", "Sistem Komputer", "Manajemen Informasi"])
-        if minat:
-            minat_chosen = True
-            st.write("Matakuliah Minat:")
-            if minat == "Sains Data":
-                st.table(matakuliah_minat[17])
-                minat = matakuliah_minat[17]
-            elif minat == "Sains Komputasional":
-                st.table(matakuliah_minat[18])
-                minat = matakuliah_minat[18]
-            elif minat == "Sistem Komputer":
-                st.table(matakuliah_minat[19])
-                minat = matakuliah_minat[19]
-            elif minat == "Manajemen Informasi":
-                st.table(matakuliah_minat[20])
-                minat = matakuliah_minat[20]
-    
-    # Jika telah mengambil matakuliah yang dibutuhkan untuk Tesis, tetapkan wajib
-    if 11 in matakuliah_sebelumnya_id and 12 in matakuliah_sebelumnya_id and 13 in matakuliah_sebelumnya_id:
-        wajib = matakuliah_wajib[14]
-    elif 11 in matakuliah_sebelumnya_id and 12 in matakuliah_sebelumnya_id and 13 in matakuliah_sebelumnya_id and 14 in matakuliah_sebelumnya_id:
-        wajib = matakuliah_wajib[15]
-    elif 11 in matakuliah_sebelumnya_id and 12 in matakuliah_sebelumnya_id and 13 in matakuliah_sebelumnya_id and 14 in matakuliah_sebelumnya_id and 15 in matakuliah_sebelumnya_id:
-        wajib = matakuliah_wajib[16]
+        if len(matakuliah_sebelumnya_id) >= 14 and all(id in matakuliah_sebelumnya_id for id in [12, 13, 14, 15, 16, 17]):
+            st.success('Selamat Anda Sudah Lulus!', icon="✅")
+            return
+
+        # Jika belum mengambil matakuliah minat, tampilkan selectbox untuk memilih minat
+        if 18 not in matakuliah_sebelumnya_id and 19 not in matakuliah_sebelumnya_id and 20 not in matakuliah_sebelumnya_id and 21 not in matakuliah_sebelumnya_id:
+            minat = st.selectbox("Pilih Minat:", ["", "Sains Data", "Sains Komputasional", "Sistem Komputer", "Manajemen Informasi"])
+            if minat:
+                minat_chosen = True
+                st.write("Matakuliah Minat:")
+                if minat == "Sains Data":
+                    st.table(matakuliah_minat[18])
+                    minat = matakuliah_minat[18]
+                elif minat == "Sains Komputasional":
+                    st.table(matakuliah_minat[19])
+                    minat = matakuliah_minat[19]
+                elif minat == "Sistem Komputer":
+                    st.table(matakuliah_minat[20])
+                    minat = matakuliah_minat[20]
+                elif minat == "Manajemen Informasi":
+                    st.table(matakuliah_minat[21])
+                    minat = matakuliah_minat[21]
+        
+        # Jika telah mengambil matakuliah yang dibutuhkan untuk Tesis, tetapkan wajib
+        if 12 in matakuliah_sebelumnya_id and 13 in matakuliah_sebelumnya_id and 14 in matakuliah_sebelumnya_id:
+            wajib = matakuliah_wajib[15]
+        elif 12 in matakuliah_sebelumnya_id and 13 in matakuliah_sebelumnya_id and 14 in matakuliah_sebelumnya_id and 15 in matakuliah_sebelumnya_id:
+            wajib = matakuliah_wajib[16]
+        elif 12 in matakuliah_sebelumnya_id and 13 in matakuliah_sebelumnya_id and 14 in matakuliah_sebelumnya_id and 15 in matakuliah_sebelumnya_id and 16 in matakuliah_sebelumnya_id:
+            wajib = matakuliah_wajib[17]
 
     # Button untuk memproses penjadwalan
     if st.button("Proses Penjadwalan"):
         # Jalankan algoritma genetika
         best_solution, best_fitness = genetic_algorithm(matakuliah_sebelumnya_id, minat if minat_chosen else None, wajib if wajib else None)
-
-        # best_solution = list(set(best_solution))
-
-        print(len(best_solution))
         
         st.write("Fitness Terbaik:", best_fitness)
         st.write("Jadwal Optimal:")
