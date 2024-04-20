@@ -141,38 +141,36 @@ def calculate_fitness(individual):
 # Fungsi untuk menghasilkan populasi awal
 def generate_initial_population(matakuliah_sebelumnya_id, minat=None, wajib=None):
     population = set()  # Menggunakan set untuk memastikan setiap individu unik
-    
+    individual = []
     # Jika matakuliah_sebelumnya_id kosong, ambil 3 matakuliah dari matakuliah_mkom dan 3 matakuliah_wajib
-    if not matakuliah_sebelumnya_id:
-        remaining_matakuliah = set()
+    if matakuliah_sebelumnya_id == None:
+        remaining_matakuliah = set(matakuliah_mkom.keys())
         
         # Ambil 3 matakuliah dari matakuliah_mkom
-        for i, (key, value) in enumerate(matakuliah_mkom.items()):
-            if i < 3:
-                remaining_matakuliah.add(key)
+        for _ in range(3):
+            matkul_id = random.choice(list(remaining_matakuliah))
+            individual.append(matkul_id)
+            remaining_matakuliah.discard(matkul_id)
         
-        # Ambil 3 matakuliah dari matakuliah_wajib
-        for i, (key, value) in enumerate(matakuliah_wajib.items()):
-            if i < 3:
-                remaining_matakuliah.add(key)
+        # Ambil 3 matakuliah wajib
+        for matkul_id in [12, 13, 14]:
+            individual.append(matkul_id)
     else:
         remaining_matakuliah = set(matakuliah_mkom.keys()) - set(matakuliah_sebelumnya_id)
     
-    individual = []
-    
-    # Jika ada minat, pastikan matakuliah minat tersebut dimasukkan ke dalam individu
-    if minat:
-        minat_id = next((key for key, value in matakuliah_minat.items() if value["Nama"] == minat["Nama"]), None)
-        if minat_id:
-            individual.append(minat_id)
-            remaining_matakuliah.discard(minat_id)
-    
-    # Jika ada matakuliah wajib, pastikan matakuliah wajib tersebut dimasukkan ke dalam individu
-    if wajib:
-        wajib_id = next((key for key, value in matakuliah_wajib.items() if value["Nama"] == wajib["Nama"]), None)
-        if wajib_id:
-            individual.append(wajib_id)
-            remaining_matakuliah.discard(wajib_id)
+        # Jika ada minat, pastikan matakuliah minat tersebut dimasukkan ke dalam individu
+        if minat:
+            minat_id = next((key for key, value in matakuliah_minat.items() if value["Nama"] == minat["Nama"]), None)
+            if minat_id:
+                individual.append(minat_id)
+                remaining_matakuliah.discard(minat_id)
+        
+        # Jika ada matakuliah wajib, pastikan matakuliah wajib tersebut dimasukkan ke dalam individu
+        if wajib:
+            wajib_id = next((key for key, value in matakuliah_wajib.items() if value["Nama"] == wajib["Nama"]), None)
+            if wajib_id:
+                individual.append(wajib_id)
+                remaining_matakuliah.discard(wajib_id)
     
     # Tambahkan matakuliah lainnya dari sisa matakuliah yang tersedia
     while len(individual) < NUM_MATKUL:
@@ -253,7 +251,7 @@ def main():
 
     semester = st.selectbox("Semester:", ["Semester 1", "Bukan Semester 1"])
     if semester == "Semester 1":
-        matakuliah_sebelumnya_id = []
+        matakuliah_sebelumnya_id = None
         minat = None
         wajib = None
     else:
